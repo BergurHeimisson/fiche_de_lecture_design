@@ -1,0 +1,74 @@
+# Livres et poèmes
+
+Cochées : fiche déjà remplie. Format : Titre — Auteur (année) · langue originale · type
+
+- [ ] Le Grand Meaulnes — Alain-Fournier (1913) · fr · livre
+- [ ] Le Pont Mirabeau — Guillaume Apollinaire (1913) · fr · poème
+- [ ] Pride and Prejudice — Jane Austen (1813) · en · livre
+- [ ] Eugénie Grandet — Honoré de Balzac (1833) · fr · livre
+- [ ] Le Père Goriot — Honoré de Balzac (1835) · fr · livre
+- [ ] L'Albatros — Charles Baudelaire (1861) · fr · poème
+- [ ] En attendant Godot — Samuel Beckett (1952) · fr · livre
+- [ ] Le città invisibili — Italo Calvino (1972) · it · livre
+- [x] L'Étranger — Albert Camus (1942) · fr · livre
+- [ ] Le Mythe de Sisyphe — Albert Camus (1942) · fr · livre
+- [ ] La Peste — Albert Camus (1947) · fr · livre
+- [ ] La Chute — Albert Camus (1956) · fr · livre
+- [ ] Voyage au bout de la nuit — Louis-Ferdinand Céline (1932) · fr · livre
+- [ ] Le Cid — Pierre Corneille (1637) · fr · livre
+- [x] Le Comte de Monte-Cristo — Alexandre Dumas (1844) · fr · livre
+- [ ] Les Trois Mousquetaires — Alexandre Dumas (1844) · fr · livre
+- [ ] L'Amant — Marguerite Duras (1984) · fr · livre
+- [ ] Il nome della rosa — Umberto Eco (1980) · it · livre
+- [ ] The Great Gatsby — F. Scott Fitzgerald (1925) · en · livre
+- [ ] Madame Bovary — Gustave Flaubert (1857) · fr · livre
+- [ ] Effi Briest — Theodor Fontane (1895) · de · livre
+- [ ] Die Leiden des jungen Werthers — Johann Wolfgang von Goethe (1774) · de · livre
+- [ ] Siddhartha — Hermann Hesse (1922) · de · livre
+- [ ] Der Steppenwolf — Hermann Hesse (1927) · de · livre
+- [ ] Notre-Dame de Paris — Victor Hugo (1831) · fr · livre
+- [x] Demain, dès l'aube… — Victor Hugo (1847) · fr · poème
+- [ ] Les Misérables — Victor Hugo (1862) · fr · livre
+- [ ] Ulysses — James Joyce (1922) · en · livre
+- [ ] Die Verwandlung — Franz Kafka (1915) · de · livre
+- [ ] Der Process — Franz Kafka (1925) · de · livre
+- [ ] La Princesse de Clèves — Madame de La Fayette (1678) · fr · livre
+- [ ] Les Liaisons dangereuses — Choderlos de Laclos (1782) · fr · livre
+- [ ] Le Lac — Alphonse de Lamartine (1820) · fr · poème
+- [ ] Il Gattopardo — Giuseppe Tomasi di Lampedusa (1958) · it · livre
+- [ ] Sjálfstætt fólk — Halldór Laxness (1934) · is · livre
+- [ ] Íslandsklukkan — Halldór Laxness (1943) · is · livre
+- [ ] Se questo è un uomo — Primo Levi (1947) · it · livre
+- [ ] Buddenbrooks — Thomas Mann (1901) · de · livre
+- [ ] Der Tod in Venedig — Thomas Mann (1912) · de · livre
+- [x] Der Zauberberg — Thomas Mann (1924) · de · livre
+- [ ] I promessi sposi — Alessandro Manzoni (1827) · it · livre
+- [ ] Une vie — Guy de Maupassant (1883) · fr · livre
+- [ ] Bel-Ami — Guy de Maupassant (1885) · fr · livre
+- [ ] Le Horla — Guy de Maupassant (1887) · fr · livre
+- [ ] Moby-Dick — Herman Melville (1851) · en · livre
+- [ ] Tartuffe — Molière (1664) · fr · livre
+- [ ] Le Misanthrope — Molière (1666) · fr · livre
+- [ ] Nineteen Eighty-Four — George Orwell (1949) · en · livre
+- [ ] Du côté de chez Swann — Marcel Proust (1913) · fr · livre
+- [ ] Zazie dans le métro — Raymond Queneau (1959) · fr · livre
+- [ ] Gargantua — François Rabelais (1534) · fr · livre
+- [ ] Phèdre — Jean Racine (1677) · fr · livre
+- [ ] Le Dormeur du val — Arthur Rimbaud (1870) · fr · poème
+- [ ] Cyrano de Bergerac — Edmond Rostand (1897) · fr · livre
+- [ ] Bonjour tristesse — Françoise Sagan (1954) · fr · livre
+- [x] Le Petit Prince — Antoine de Saint-Exupéry (1943) · fr · livre
+- [ ] La Nausée — Jean-Paul Sartre (1938) · fr · livre
+- [ ] Huis clos — Jean-Paul Sartre (1944) · fr · livre
+- [ ] Le Rouge et le Noir — Stendhal (1830) · fr · livre
+- [ ] La Chartreuse de Parme — Stendhal (1839) · fr · livre
+- [ ] Chanson d'automne — Paul Verlaine (1866) · fr · poème
+- [ ] Vingt mille lieues sous les mers — Jules Verne (1870) · fr · livre
+- [ ] Le Tour du monde en quatre-vingts jours — Jules Verne (1872) · fr · livre
+- [ ] L'Écume des jours — Boris Vian (1947) · fr · livre
+- [x] Candide — Voltaire (1759) · fr · livre
+- [ ] Mrs Dalloway — Virginia Woolf (1925) · en · livre
+- [ ] Mémoires d'Hadrien — Marguerite Yourcenar (1951) · fr · livre
+- [ ] Thérèse Raquin — Émile Zola (1867) · fr · livre
+- [ ] L'Assommoir — Émile Zola (1877) · fr · livre
+- [ ] Germinal — Émile Zola (1885) · fr · livre

@@ -1,0 +1,1193 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Fiches de lecture</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;1,9..144,400&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --emphasis: normal;
+  --bg: #e7e2d8;
+  --card: #fbf8f2;
+  --ink: #23201b;
+  --muted: #685f53;
+  --rule: #e2dacb;
+  --shadow: 0 2px 4px rgba(40,30,20,.06), 0 24px 48px rgba(40,30,20,.16);
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #14120f;
+    --card: #221f1a;
+    --ink: #eee8dc;
+    --muted: #a39a8a;
+    --rule: #3a352c;
+    --shadow: 0 2px 4px rgba(0,0,0,.4), 0 24px 48px rgba(0,0,0,.5);
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #14120f;
+  --card: #221f1a;
+  --ink: #eee8dc;
+  --muted: #a39a8a;
+  --rule: #3a352c;
+  --shadow: 0 2px 4px rgba(0,0,0,.4), 0 24px 48px rgba(0,0,0,.5);
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { height: 100%; }
+body {
+  background: var(--bg);
+  color: var(--ink);
+  font: 14.5px/1.55 Inter, system-ui, sans-serif;
+  overflow: hidden;
+  display: grid;
+  grid-template-rows: 1fr auto;
+}
+
+.stage {
+  display: grid;
+  place-items: center;
+  perspective: 2400px;
+  min-height: 0;
+  padding-top: 16px;
+}
+.deck {
+  position: relative;
+  width: min(1060px, 90vw);
+  height: min(640px, calc(100vh - 110px));
+}
+.deck::before, .deck::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: var(--card);
+  border-radius: 14px;
+  box-shadow: var(--shadow);
+  opacity: .55;
+}
+.deck::before { transform: translate(14px, 14px) rotate(1.2deg); }
+.deck::after  { transform: translate(7px, 7px) rotate(.5deg); opacity: .8; }
+
+.card {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  transform-style: preserve-3d;
+  transition: transform .6s cubic-bezier(.4,.1,.2,1);
+  cursor: pointer;
+}
+.card.flipped { transform: rotateY(180deg); }
+.face {
+  position: absolute;
+  inset: 0;
+  background: var(--card);
+  border-radius: 14px;
+  box-shadow: var(--shadow);
+  backface-visibility: hidden;
+  overflow: hidden;
+  border-top: 6px solid var(--c);
+  padding: 32px 56px 44px;
+  --ct: color-mix(in srgb, var(--c) 68%, var(--ink));
+  display: grid;
+  grid-template-rows: auto 1fr;
+  gap: 24px;
+}
+.back { transform: rotateY(180deg); }
+
+.head {
+  display: flex;
+  justify-content: space-between;
+  align-items: end;
+  gap: 24px;
+  padding-bottom: 18px;
+  border-bottom: 1px solid var(--rule);
+}
+.title { font: 600 28px/1.15 Fraunces, Georgia, serif; }
+.author { color: var(--muted); margin-top: 3px; }
+
+.body {
+  display: grid;
+  grid-template-columns: 1.55fr 1fr;
+  gap: 48px;
+  min-height: 0;
+}
+.label {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  color: var(--ct);
+  margin-bottom: 6px;
+}
+.ctx { color: var(--muted); }
+.notes-lang { text-transform: none; letter-spacing: 0; font-weight: 400; color: var(--muted); }
+
+.main-quote, .aside, .passages { max-height: 100%; overflow-y: auto; scrollbar-width: thin; }
+.has-more {
+  -webkit-mask-image: linear-gradient(to bottom, #000 calc(100% - 36px), transparent);
+  mask-image: linear-gradient(to bottom, #000 calc(100% - 36px), transparent);
+}
+.main-quote { align-self: start; padding-top: 8px; }
+.main-quote .ctx { margin-bottom: 18px; max-width: 52ch; }
+.main-quote blockquote {
+  font: var(--emphasis) 400 25px/1.4 Fraunces, Georgia, serif;
+  text-wrap: pretty;
+  border-left: 3px solid var(--c);
+  padding-left: 22px;
+}
+.main-quote .src { color: var(--muted); font-size: 12.5px; margin-top: 12px; padding-left: 25px; }
+
+.aside { display: grid; align-content: start; gap: 22px; padding-top: 8px; }
+.aside p { text-wrap: pretty; }
+ul.people { list-style: none; display: grid; gap: 4px; }
+ul.people b { font-weight: 600; }
+ul.people span { color: var(--muted); }
+
+.passages { display: grid; align-content: start; gap: 22px; padding-top: 8px; }
+.flip-cue {
+  position: absolute;
+  right: 22px;
+  bottom: 12px;
+  font: 500 12px Inter, sans-serif;
+  color: var(--muted);
+  background: none;
+  border: 0;
+  border-radius: 6px;
+  padding: 4px 8px;
+  cursor: pointer;
+}
+.flip-cue:hover { color: var(--ink); }
+:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
+.picker-count { color: var(--muted); font-size: 11.5px; }
+.passage blockquote {
+  font: var(--emphasis) 400 18px/1.45 Fraunces, Georgia, serif;
+  text-wrap: pretty;
+  margin-top: 4px;
+}
+.passage .ctx { font-size: 13.5px; }
+.why { font: 400 20px/1.45 Fraunces, Georgia, serif; text-wrap: pretty; }
+
+nav {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  gap: 20px;
+  padding: 16px 20px 18px;
+}
+.browse { display: flex; align-items: center; gap: 20px; }
+.arrow {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  border: 1px solid var(--rule);
+  background: var(--card);
+  color: var(--ink);
+  font-size: 17px;
+  cursor: pointer;
+}
+.arrow:hover { border-color: var(--ink); }
+.count { font: 500 13px Inter, sans-serif; color: var(--muted); min-width: 64px; text-align: center; font-variant-numeric: tabular-nums; }
+.tools { justify-self: end; display: flex; gap: 8px; position: relative; }
+.tool {
+  font: 500 12.5px Inter, sans-serif;
+  color: var(--ink);
+  background: var(--card);
+  border: 1px solid var(--rule);
+  border-radius: 999px;
+  padding: 7px 14px;
+  cursor: pointer;
+  white-space: nowrap;
+}
+.tool:hover { border-color: var(--ink); }
+.tool kbd { font: inherit; color: var(--muted); margin-left: 6px; }
+
+.card:not(.is-stub) .stub-body, .card.is-stub .book-body, .card.is-stub .poem-body { display: none; }
+.stub-body { display: grid; grid-template-columns: 1fr; place-items: center; }
+.stub-text { color: var(--muted); font: 400 20px Fraunces, Georgia, serif; }
+
+.library {
+  position: fixed;
+  inset: 0;
+  z-index: 10;
+  display: grid;
+  place-items: center;
+  background: color-mix(in srgb, var(--bg) 70%, transparent);
+  backdrop-filter: blur(6px);
+}
+.library[hidden] { display: none; }
+.lib-panel {
+  width: min(1100px, 94vw);
+  height: calc(100vh - 48px);
+  background: var(--card);
+  border-radius: 14px;
+  box-shadow: var(--shadow);
+  display: grid;
+  grid-template-rows: auto auto 1fr;
+  overflow: hidden;
+}
+.lib-head {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 18px 24px;
+  border-bottom: 1px solid var(--rule);
+}
+#libSearch {
+  flex: 1;
+  min-width: 0;
+  font: 400 17px Inter, sans-serif;
+  color: var(--ink);
+  background: var(--bg);
+  border: 1px solid var(--rule);
+  border-radius: 10px;
+  padding: 9px 14px;
+  outline: none;
+}
+#libSearch:focus { border-color: var(--muted); }
+.seg { display: flex; border: 1px solid var(--rule); border-radius: 999px; padding: 3px; }
+.seg button {
+  font: 500 12.5px Inter, sans-serif;
+  color: var(--muted);
+  background: none;
+  border: 0;
+  border-radius: 999px;
+  padding: 5px 12px;
+  cursor: pointer;
+  white-space: nowrap;
+}
+.seg button.on { background: var(--ink); color: var(--card); }
+.lib-count { padding: 10px 24px 0; font-size: 12.5px; color: var(--muted); }
+.lib-list { overflow-y: auto; padding: 8px 24px 28px; }
+.lib-group { margin-top: 18px; }
+.lib-group h3 {
+  font: 600 11px Inter, sans-serif;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 8px;
+}
+.lib-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: 10px; }
+.tile {
+  text-align: left;
+  background: var(--bg);
+  border: 1px solid var(--rule);
+  border-top: 4px solid var(--c);
+  border-radius: 8px;
+  padding: 10px 12px 11px;
+  cursor: pointer;
+  color: var(--ink);
+  display: grid;
+  gap: 2px;
+}
+.tile:hover { border-color: var(--c); }
+.tile.current { box-shadow: 0 0 0 2px var(--c); }
+.tile-title { font: 600 15px/1.25 Fraunces, Georgia, serif; }
+.tile-author { font-size: 12px; color: var(--muted); }
+.tile-meta { display: flex; align-items: center; gap: 3px; margin-top: 6px; font-size: 11.5px; color: var(--muted); }
+.tile-meta i { width: 6px; height: 6px; border-radius: 50%; box-shadow: inset 0 0 0 1px var(--rule); }
+.tile-meta i.on { background: var(--c); box-shadow: none; }
+.tile-meta span { margin-left: 6px; }
+.tile.empty .tile-title { color: var(--muted); }
+
+.tr-title { color: var(--ct); }
+.card:not(.is-poem) .poem-body, .card.is-poem .book-body { display: none; }
+.poem-wrap { display: grid; grid-template-rows: auto minmax(0, 1fr) auto; min-height: 0; }
+.poem-frame { display: grid; grid-template-columns: 1fr auto; gap: 16px; min-height: 0; }
+.poem-scroll {
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  scrollbar-width: none;
+  scroll-behavior: smooth;
+  min-height: 0;
+  -webkit-mask-image: linear-gradient(to bottom, transparent 0, #000 var(--ft, 0px), #000 calc(100% - var(--fb, 0px)), transparent 100%);
+  mask-image: linear-gradient(to bottom, transparent 0, #000 var(--ft, 0px), #000 calc(100% - var(--fb, 0px)), transparent 100%);
+}
+.poem-scroll::-webkit-scrollbar { display: none; }
+.poem-scroll blockquote { margin-block: auto; }
+.poem-nav { display: none; flex-direction: column; justify-content: center; gap: 8px; }
+.poem-frame.overflow .poem-nav { display: flex; }
+.poem-nav button {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: 1px solid var(--rule);
+  background: var(--card);
+  color: var(--ink);
+  font-size: 15px;
+  cursor: pointer;
+}
+.poem-nav button:hover:not(:disabled) { border-color: var(--c); color: var(--ct); }
+.poem-nav button:disabled { opacity: .3; cursor: default; }
+blockquote.poem {
+  font: var(--emphasis) 400 19px/1.5 Fraunces, Georgia, serif;
+  border-left: 3px solid var(--c);
+  padding-left: 22px;
+}
+blockquote.poem p + p { margin-top: 14px; }
+.poem-wrap .badge { margin: 0 0 10px 25px; }
+.poem-wrap .src { color: var(--muted); font-size: 12.5px; margin-top: 12px; padding-left: 25px; }
+.orig-mark { font-weight: 400; font-style: var(--emphasis); font-size: .7em; color: var(--ct); margin-left: 6px; }
+.badge {
+  display: inline-block;
+  font: 600 10.5px Inter, sans-serif;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: var(--card);
+  background: var(--ct);
+  border-radius: 4px;
+  padding: 2px 8px;
+  vertical-align: 1px;
+}
+.main-quote .badge { margin: 0 0 10px 25px; }
+blockquote.tr { border-left: 2px dashed var(--c); }
+.passage blockquote.tr { padding-left: 14px; }
+.badge.libre { background: none; color: var(--ct); box-shadow: inset 0 0 0 1px var(--ct); }
+blockquote.libre { color: color-mix(in srgb, var(--ink) 74%, var(--card)); border-left-style: dotted; }
+.credit { font-size: 12px; color: var(--muted); margin-left: 4px; }
+blockquote.to-copy { color: var(--muted); border-left-style: dotted; }
+
+.reads { display: flex; align-items: center; gap: 6px; padding-bottom: 4px; }
+.reads button {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  border: 1.5px solid var(--rule);
+  background: none;
+  cursor: pointer;
+  padding: 0;
+  transition: transform .12s;
+}
+.reads button:hover { transform: scale(1.25); border-color: var(--c); }
+.reads button.on { background: var(--c); border-color: var(--c); }
+.missing { font-style: var(--emphasis); }
+.picker { justify-self: start; position: relative; }
+.picker-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font: 500 12.5px Inter, sans-serif;
+  color: var(--ink);
+  background: var(--card);
+  border: 1px solid var(--rule);
+  border-radius: 999px;
+  padding: 7px 14px;
+  cursor: pointer;
+  white-space: nowrap;
+}
+.picker-btn:hover { border-color: var(--ink); }
+.picker-label { color: var(--muted); }
+.caret { color: var(--muted); font-size: 10px; }
+.q { display: inline-block; width: 8px; height: 8px; border-radius: 50%; flex: none; }
+.popover {
+  position: absolute;
+  bottom: calc(100% + 8px);
+  background: var(--card);
+  border: 1px solid var(--rule);
+  border-radius: 12px;
+  box-shadow: var(--shadow);
+  padding: 6px;
+  z-index: 5;
+}
+.popover[hidden] { display: none; }
+.picker-menu { left: 0; min-width: 250px; }
+.picker-menu button {
+  display: grid;
+  grid-template-columns: 8px 1fr auto;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  font: 500 13px Inter, sans-serif;
+  color: var(--ink);
+  background: none;
+  border: 0;
+  border-radius: 8px;
+  padding: 8px 10px;
+  cursor: pointer;
+  text-align: left;
+}
+.picker-menu button:hover { background: var(--bg); }
+.picker-menu button.on { background: var(--bg); font-weight: 600; }
+.picker-menu small { color: var(--muted); font-size: 11.5px; font-weight: 400; }
+.legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 12px;
+  border-top: 1px solid var(--rule);
+  margin-top: 6px;
+  padding: 8px 10px 4px;
+  font-size: 11px;
+  color: var(--muted);
+}
+.legend span { display: flex; align-items: center; gap: 5px; }
+.settings { right: 0; width: 270px; padding: 14px 16px; display: grid; gap: 14px; }
+.settings label { display: grid; gap: 6px; font-size: 12.5px; color: var(--muted); }
+.settings label.check { display: flex; align-items: center; gap: 8px; color: var(--ink); cursor: pointer; }
+.settings select {
+  font: 500 13px Inter, sans-serif;
+  color: var(--ink);
+  background: var(--bg);
+  border: 1px solid var(--rule);
+  border-radius: 8px;
+  padding: 7px 10px;
+}
+.q.green { background: #3f9b5a; }
+.q.yellow { background: #d9a400; }
+.q.red { background: #c8453a; }
+.q.orig { visibility: hidden; }
+.picker-btn .q.orig { display: none; }
+.q.none { box-shadow: inset 0 0 0 1.5px var(--muted); }
+</style>
+</head>
+<body>
+
+<div class="stage">
+  <div class="deck">
+    <div class="card" id="card">
+
+      <article class="face front">
+        <div class="head">
+          <div><div class="title"></div><div class="author"></div></div>
+          <div class="reads"></div>
+        </div>
+        <div class="body book-body">
+          <div class="main-quote">
+            <div class="label" data-l="scene" data-notes></div>
+            <p class="ctx" id="ctx"></p>
+            <div id="badge"></div>
+            <blockquote id="quote"></blockquote>
+            <div class="src" id="src"></div>
+          </div>
+          <div class="aside">
+            <div><div class="label" data-l="gist"></div><p id="gist"></p></div>
+            <div><div class="label" data-l="people"></div><ul class="people" id="people"></ul></div>
+          </div>
+        </div>
+        <div class="body poem-body">
+          <div class="poem-wrap">
+            <div id="poemBadge"></div>
+            <div class="poem-frame" id="poemFrame">
+              <div class="poem-scroll" id="poemScroll"><blockquote id="poem"></blockquote></div>
+              <div class="poem-nav">
+                <button data-poem="-1" aria-label="Strophe précédente">&uarr;</button>
+                <button data-poem="1" aria-label="Strophe suivante">&darr;</button>
+              </div>
+            </div>
+            <div class="src" id="poemSrc"></div>
+          </div>
+          <div class="aside">
+            <div><div class="label" data-l="scene" data-notes></div><p class="ctx" id="poemCtx"></p></div>
+          </div>
+        </div>
+        <div class="body stub-body">
+          <p class="stub-text" data-l="stub"></p>
+        </div>
+        <button class="flip-cue"><span aria-hidden="true">&#8635;</span> <span data-c="flip"></span></button>
+      </article>
+
+      <article class="face back">
+        <div class="head">
+          <div><div class="title"></div><div class="author"></div></div>
+          <div class="reads"></div>
+        </div>
+        <div class="body book-body">
+          <div class="passages" id="passages"></div>
+          <div class="aside">
+            <div><div class="label" data-l="why" data-notes></div><p class="why" id="why"></p></div>
+          </div>
+        </div>
+        <div class="body poem-body">
+          <div class="aside">
+            <div><div class="label" data-l="form" data-notes></div><p id="poemForm"></p></div>
+            <div><div class="label" data-l="collection"></div><p id="poemColl"></p></div>
+          </div>
+          <div class="aside">
+            <div><div class="label" data-l="why"></div><p class="why" id="poemWhy"></p></div>
+          </div>
+        </div>
+        <div class="body stub-body">
+          <p class="stub-text" data-l="stub"></p>
+        </div>
+        <button class="flip-cue"><span aria-hidden="true">&#8635;</span> <span data-c="flip"></span></button>
+      </article>
+
+    </div>
+  </div>
+</div>
+
+<nav>
+  <div class="picker">
+    <button class="picker-btn" id="pickerBtn" aria-haspopup="true" aria-expanded="false">
+      <span class="picker-label" data-c="readIn"></span><i class="q" id="pickerDot"></i><span id="pickerName"></span><small class="picker-count" id="pickerCount"></small><span class="caret">&#9662;</span>
+    </button>
+    <div class="popover picker-menu" id="pickerMenu" hidden></div>
+  </div>
+  <div class="browse">
+    <button class="arrow" data-step="-1" data-c-title="hint">&larr;</button>
+    <span class="count" id="count"></span>
+    <button class="arrow" data-step="1" data-c-title="hint">&rarr;</button>
+  </div>
+  <div class="tools">
+    <button class="tool" id="shuffle" data-c="random"></button>
+    <button class="tool" id="openLib"><span data-c="library"></span> <kbd>/</kbd></button>
+    <button class="tool" id="settingsBtn" data-c="settings" aria-haspopup="true" aria-expanded="false"></button>
+    <div class="popover settings" id="settings" hidden>
+      <label><span data-c="uiLang"></span>
+        <select id="uiLangSel">
+          <option value="fr">Français</option>
+          <option value="is">Íslenska</option>
+          <option value="en">English</option>
+          <option value="de">Deutsch</option>
+          <option value="it">Italiano</option>
+        </select>
+      </label>
+      <label class="check"><input type="checkbox" id="italicChk"> <span data-c="italic"></span></label>
+    </div>
+  </div>
+</nav>
+
+<div class="library" id="library" hidden>
+  <div class="lib-panel">
+    <div class="lib-head">
+      <input id="libSearch" type="search" autocomplete="off" spellcheck="false">
+      <div class="seg" id="libKind">
+        <button data-kind="all" class="on" data-c="all"></button>
+        <button data-kind="book" data-c="books"></button>
+        <button data-kind="poem" data-c="poems"></button>
+      </div>
+      <div class="seg" id="libSort">
+        <button data-sort="author" class="on" data-c="byAuthor"></button>
+        <button data-sort="title" data-c="byTitle"></button>
+        <button data-sort="recent" data-c="recent"></button>
+      </div>
+      <button class="tool" id="libClose"><span data-c="close"></span> <kbd>Esc</kbd></button>
+    </div>
+    <div class="lib-count" id="libCount"></div>
+    <div class="lib-list" id="libList"></div>
+  </div>
+</div>
+
+<script>
+const TO_COPY = "[Citation à recopier depuis ton édition]";
+const books = [
+  {
+    title: "L'Étranger", author: "Albert Camus · 1942", color: "#c0573f",
+    tr: { is: "Útlendingurinn", en: "The Stranger", de: "Der Fremde", it: "Lo straniero" },
+    ctx: "Dernière nuit en cellule. Meursault vient de chasser l'aumônier dans un accès de colère ; il attend son exécution.",
+    quote: { fr: TO_COPY },
+    src: "Dernières lignes du roman · II, 5",
+    gist: "Un employé de bureau à Alger tue un homme sur une plage, presque par hasard. Au procès, on le condamne surtout pour n'avoir pas pleuré à l'enterrement de sa mère.",
+    people: [["Meursault", "le narrateur, détaché"], ["Marie", "sa compagne"], ["Raymond", "le voisin qui l'entraîne"]],
+    passages: [
+      { ctx: "Première ligne. Un télégramme de l'asile lui annonce la mort de sa mère.", src: "I, 1", quote: { fr: TO_COPY } },
+      { ctx: "Sur la plage, aveuglé par le soleil, il a tiré une fois, puis tire encore sur le corps inerte.", src: "Fin de la 1re partie · I, 6", quote: { fr: TO_COPY } },
+      { ctx: "Le procureur, devant le jury, ramène tout à l'enterrement.", src: "II, 3", quote: { fr: TO_COPY } }
+    ],
+    why: "La voix la plus froide que j'aie lue, et pourtant la fin m'a apaisé. On se surprend à juger Meursault exactement comme le tribunal.",
+    reads: 1
+  },
+  {
+    title: "Le Petit Prince", author: "Antoine de Saint-Exupéry · 1943", color: "#d29a2c",
+    tr: { is: "Litli prinsinn", en: "The Little Prince", de: "Der kleine Prinz", it: "Il Piccolo Principe" },
+    ctx: "Le renard, que le petit prince a apprivoisé, lui dit adieu. En échange, il lui confie un secret.",
+    quote: { fr: TO_COPY },
+    src: "Chapitre XXI",
+    gist: "Un aviateur en panne dans le désert rencontre un enfant venu d'une petite planète. L'enfant raconte son voyage, les adultes absurdes qu'il a croisés, et la rose qu'il a laissée chez lui.",
+    people: [["Le petit prince", "le voyageur"], ["L'aviateur", "le narrateur"], ["Le renard", "celui qui enseigne"], ["La rose", "celle qu'il aime"]],
+    passages: [
+      { ctx: "Au réveil dans le désert, la première chose que l'enfant demande à l'aviateur.", src: "Chapitre II", quote: { fr: TO_COPY } },
+      { ctx: "Le renard explique au petit prince pourquoi sa rose est unique parmi des milliers d'autres.", src: "Chapitre XXI", quote: { fr: TO_COPY } },
+      { ctx: "Le narrateur, enfant, a dessiné un serpent qui digère un éléphant ; les adultes y voient un chapeau.", src: "Chapitre I", quote: { fr: TO_COPY } }
+    ],
+    why: "Un livre pour enfants qui ne parle vraiment qu'aux adultes. Chaque relecture, ce n'est pas le même passage qui me touche.",
+    reads: 4
+  },
+  {
+    title: "Candide", author: "Voltaire · 1759", color: "#4f7f5a",
+    tr: { is: "Birtingur", en: "Candide", de: "Candide oder der Optimismus", it: "Candido" },
+    ctx: "Tout est fini : la petite troupe vit dans une métairie près de Constantinople. Pangloss refait une dernière fois sa démonstration que tout s'enchaîne pour le mieux.",
+    quote: {
+      fr: "Cela est bien dit, répondit Candide, mais il faut cultiver notre jardin.",
+        it: "Questo è ben detto, rispose Candido, ma bisogna coltivare il nostro giardino.",
+        de: "Das ist gut gesagt, antwortete Candide, aber wir müssen unseren Garten bestellen.",
+      is: "Vel mælt, svaraði Birtingur, en við verðum að rækta garðinn okkar.",
+      en: "That is well said, replied Candide, but we must cultivate our garden."
+    },
+    src: "Dernière phrase · chapitre XXX",
+    gist: "Chassé du château où son maître Pangloss lui enseignait que tout est au mieux, Candide traverse guerres, naufrages et tremblement de terre. Le monde dément la théorie à chaque page.",
+    people: [["Candide", "le naïf"], ["Pangloss", "le philosophe optimiste"], ["Cunégonde", "celle qu'il aime"], ["Martin", "le pessimiste"]],
+    passages: [
+      { ctx: "Au Surinam, Candide rencontre un esclave mutilé, à qui on a coupé une main et une jambe.", src: "Chapitre XIX", quote: {
+        fr: "C'est à ce prix que vous mangez du sucre en Europe.",
+        it: "È a questo prezzo che voi mangiate lo zucchero in Europa.",
+        de: "Um diesen Preis esst ihr Zucker in Europa.",
+        is: "Það er fyrir þetta verð sem þið borðið sykur í Evrópu.",
+        en: "It is at this price that you eat sugar in Europe." } },
+      { ctx: "Un vieux Turc qui cultive son petit terrain explique aux voyageurs pourquoi il est heureux.", src: "Chapitre XXX", quote: {
+        fr: "Le travail éloigne de nous trois grands maux, l'ennui, le vice et le besoin.",
+        it: "Il lavoro allontana da noi tre grandi mali: la noia, il vizio e il bisogno.",
+        de: "Die Arbeit hält drei große Übel von uns fern: die Langeweile, das Laster und die Not.",
+        is: "Vinnan heldur frá okkur þremur miklum meinum: leiðindum, lesti og skorti.",
+        en: "Work keeps away three great evils: boredom, vice and need." } }
+    ],
+    why: "Drôle et cruel à la fois. Toute l'ironie du livre tient dans le « mais » de la dernière phrase.",
+    reads: 2
+  },
+  {
+    title: "Le Comte de Monte-Cristo", author: "Alexandre Dumas · 1844", color: "#3f6a9a",
+    tr: { en: "The Count of Monte Cristo", de: "Der Graf von Monte Christo", it: "Il conte di Montecristo" },
+    ctx: "Sa vengeance accomplie, le comte disparaît en mer. Il laisse une lettre à Maximilien et Valentine, qu'il a réunis.",
+    quote: {
+      fr: "N'oubliez jamais que, jusqu'au jour où Dieu daignera dévoiler l'avenir à l'homme, toute la sagesse humaine sera dans ces deux mots : Attendre et espérer !",
+        it: "Non dimenticate mai che, fino al giorno in cui Dio si degnerà di svelare all'uomo l'avvenire, tutta la saggezza umana sarà racchiusa in queste due parole: Aspettare e sperare!",
+        de: "Vergessen Sie nie, dass bis zu dem Tag, an dem Gott sich herablässt, dem Menschen die Zukunft zu enthüllen, alle menschliche Weisheit in diesen zwei Worten liegt: Warten und hoffen!",
+      en: { text: "Never forget that until the day when God will deign to reveal the future to man, all human wisdom is contained in these two words, ‘Wait and hope.’", by: "anonyme", ed: "Chapman and Hall, 1846" }
+    },
+    src: "Dernières lignes du roman",
+    gist: "Edmond Dantès, trahi le jour de ses fiançailles, passe quatorze ans au château d'If. Évadé et riche du trésor de l'abbé Faria, il revient à Paris sous un autre nom pour punir ceux qui l'ont perdu.",
+    people: [["Edmond Dantès", "le comte"], ["L'abbé Faria", "son maître en prison"], ["Mercédès", "la fiancée perdue"], ["Danglars, Fernand, Villefort", "les traîtres"]],
+    passages: [
+      { ctx: "Dans la même lettre d'adieu, le comte explique à Maximilien ce que son long malheur lui a appris.", src: "Dernier chapitre", quote: {
+        fr: "Il n'y a ni bonheur ni malheur en ce monde, il y a la comparaison d'un état à un autre, voilà tout.",
+        it: "Non c'è né felicità né infelicità in questo mondo, c'è il confronto di uno stato con un altro, ecco tutto.",
+        de: "Es gibt weder Glück noch Unglück auf dieser Welt, es gibt nur den Vergleich eines Zustandes mit einem anderen, das ist alles.",
+        en: "There is neither happiness nor misery in this world; there is only the comparison of one state with another, nothing more." } }
+    ],
+    why: "Mille pages qui passent comme un week-end. Et une fin qui doute de la vengeance qu'elle vient de raconter.",
+    reads: 1
+  },
+  {
+    title: "Der Zauberberg", author: "Thomas Mann · 1924", color: "#7a5aa0", orig: "de",
+    tr: { fr: "La Montagne magique", en: "The Magic Mountain", it: "La montagna incantata" },
+    ctx: "Perdu dans une tempête de neige, Hans Castorp s'endort adossé à une grange et fait un long rêve. Au réveil, il formule la seule phrase en italique du roman.",
+    quote: {
+      de: "Der Mensch soll um der Güte und Liebe willen dem Tode keine Herrschaft einräumen über seine Gedanken.",
+      fr: "Pour l'amour de la bonté et de l'amour, l'homme ne doit pas laisser à la mort l'empire sur ses pensées.",
+        it: "Per amore della bontà e dell'amore, l'uomo non deve concedere alla morte alcun dominio sui suoi pensieri.",
+      en: "For the sake of goodness and love, man shall grant death no dominion over his thoughts."
+    },
+    src: "Chapitre VI · « Schnee »",
+    gist: "Le jeune ingénieur Hans Castorp monte à Davos pour rendre visite trois semaines à son cousin, soigné dans un sanatorium. Il y reste sept ans, pris entre la maladie, les débats d'idées et un temps qui ne s'écoule plus.",
+    people: [["Hans Castorp", "le héros ordinaire"], ["Settembrini", "l'humaniste"], ["Naphta", "le jésuite radical"], ["Clawdia Chauchat", "l'amour impossible"]],
+    passages: [
+      { ctx: "Première phrase. Hans part de Hambourg pour ce qui ne devait être qu'une visite de trois semaines.", src: "Chapitre I", quote: {
+        de: "Ein einfacher junger Mensch reiste im Hochsommer von Hamburg, seiner Vaterstadt, nach Davos-Platz im Graubündischen.",
+        fr: "Un jeune homme tout simple se rendait, en plein été, de Hambourg, sa ville natale, à Davos-Platz, dans les Grisons.",
+        it: "Un giovane semplice viaggiava in piena estate da Amburgo, sua città natale, a Davos-Platz, nei Grigioni.",
+        en: "A simple young man was travelling in high summer from Hamburg, his home town, to Davos-Platz in the Grisons." } },
+      { ctx: "Dernière phrase. Le narrateur quitte Hans sur un champ de bataille de 1914.", src: "Fin du roman · chapitre VII", quote: {
+        de: "Wird auch aus diesem Weltfest des Todes, auch aus der schlimmen Fieberbrunst, die rings den regnerischen Abendhimmel entzündet, einmal die Liebe steigen?",
+        fr: "De cette fête mondiale de la mort, de cette mauvaise fièvre qui embrase tout autour le ciel pluvieux du soir, l'amour montera-t-il un jour ?",
+        it: "Anche da questa festa mondiale della morte, anche dalla perversa febbre che tutt'intorno incendia il cielo piovoso della sera, sorgerà un giorno l'amore?",
+        en: "Out of this worldwide festival of death, out of this wicked fever that sets the rainy evening sky ablaze all around, will love one day rise up?" } }
+    ],
+    why: "Un roman sur le temps qui se dilate. Je l'ai lu lentement, et c'était exactement la bonne vitesse.",
+    reads: 1
+  },
+  {
+    type: "poem",
+    title: "Demain, dès l'aube…", author: "Victor Hugo · 1847", color: "#5b7c8c",
+    tr: { en: "Tomorrow, at Dawn", de: "Morgen, bei Tagesanbruch", it: "Domani, all'alba" },
+    ctx: "Quatre ans après la noyade de sa fille Léopoldine à Villequier, Hugo se met en route vers sa tombe. On croit lire un rendez-vous d'amour jusqu'au dernier vers.",
+    src: "Les Contemplations, IV, 14 · daté du 3 septembre 1847",
+    poem: {
+      fr: [
+        ["Demain, dès l'aube, à l'heure où blanchit la campagne,", "Je partirai. Vois-tu, je sais que tu m'attends.", "J'irai par la forêt, j'irai par la montagne.", "Je ne puis demeurer loin de toi plus longtemps."],
+        ["Je marcherai les yeux fixés sur mes pensées,", "Sans rien voir au dehors, sans entendre aucun bruit,", "Seul, inconnu, le dos courbé, les mains croisées,", "Triste, et le jour pour moi sera comme la nuit."],
+        ["Je ne regarderai ni l'or du soir qui tombe,", "Ni les voiles au loin descendant vers Harfleur,", "Et quand j'arriverai, je mettrai sur ta tombe", "Un bouquet de houx vert et de bruyère en fleur."]
+      ],
+      en: [
+        ["Tomorrow, at dawn, when the countryside turns white,", "I will set out. You see, I know you wait for me.", "I will go through the forest, I will go across the mountain.", "I cannot stay far from you any longer."],
+        ["I will walk with my eyes fixed upon my thoughts,", "Seeing nothing outside, hearing no sound,", "Alone, unknown, back bent, hands crossed,", "Sad, and the day for me will be like the night."],
+        ["I will look neither at the gold of the falling evening,", "Nor at the sails far off going down toward Harfleur,", "And when I arrive, I will lay upon your grave", "A bouquet of green holly and heather in bloom."]
+      ],
+      de: [
+        ["Morgen, beim ersten Licht, zur Stunde, da das Land erbleicht,", "breche ich auf. Siehst du, ich weiß, dass du mich erwartest.", "Ich gehe durch den Wald, ich gehe über den Berg.", "Ich kann nicht länger fern von dir bleiben."],
+        ["Ich werde gehen, die Augen auf meine Gedanken geheftet,", "ohne draußen etwas zu sehen, ohne einen Laut zu hören,", "allein, unbekannt, mit gebeugtem Rücken, die Hände gefaltet,", "traurig, und der Tag wird für mich wie die Nacht sein."],
+        ["Ich werde weder das Gold des sinkenden Abends betrachten", "noch die fernen Segel, die nach Harfleur hinabziehen,", "und wenn ich ankomme, lege ich auf dein Grab", "einen Strauß aus grüner Stechpalme und blühender Heide."]
+      ],
+      it: [
+        ["Domani, all'alba, nell'ora in cui biancheggia la campagna,", "partirò. Vedi, so che mi aspetti.", "Andrò per la foresta, andrò per la montagna.", "Non posso restare lontano da te più a lungo."],
+        ["Camminerò con gli occhi fissi sui miei pensieri,", "senza vedere nulla intorno, senza udire alcun rumore,", "solo, sconosciuto, la schiena curva, le mani incrociate,", "triste, e il giorno per me sarà come la notte."],
+        ["Non guarderò né l'oro della sera che cade,", "né le vele lontane che scendono verso Harfleur,", "e quando arriverò, poserò sulla tua tomba", "un mazzo di agrifoglio verde e di erica in fiore."]
+      ]
+    },
+    form: "Trois quatrains en alexandrins, rimes croisées. Un rythme de marche, régulier, sans un mot sur la mort avant « tombe ».",
+    collection: "Les Contemplations, 1856. Livre IV, « Pauca meae », entièrement consacré à Léopoldine.",
+    why: "Douze vers, et le poème ne dit qu'à la fin vers qui il marche. Je le sais par cœur, et la chute me prend encore.",
+    reads: 3
+  }
+];
+
+const stubPalette = ["#9a6b4f", "#5f7d6a", "#6b6f9a", "#a0705f", "#7d8a5a", "#8a5f7d", "#4f7f8a", "#9a8a4f"];
+const stubs = [["Madame Bovary", "Gustave Flaubert", "1857", "fr", "book"], ["Les Misérables", "Victor Hugo", "1862", "fr", "book"], ["Notre-Dame de Paris", "Victor Hugo", "1831", "fr", "book"], ["Le Rouge et le Noir", "Stendhal", "1830", "fr", "book"], ["La Chartreuse de Parme", "Stendhal", "1839", "fr", "book"], ["Le Père Goriot", "Honoré de Balzac", "1835", "fr", "book"], ["Eugénie Grandet", "Honoré de Balzac", "1833", "fr", "book"], ["Germinal", "Émile Zola", "1885", "fr", "book"], ["L'Assommoir", "Émile Zola", "1877", "fr", "book"], ["Thérèse Raquin", "Émile Zola", "1867", "fr", "book"], ["Bel-Ami", "Guy de Maupassant", "1885", "fr", "book"], ["Une vie", "Guy de Maupassant", "1883", "fr", "book"], ["Le Horla", "Guy de Maupassant", "1887", "fr", "book"], ["Du côté de chez Swann", "Marcel Proust", "1913", "fr", "book"], ["La Peste", "Albert Camus", "1947", "fr", "book"], ["La Chute", "Albert Camus", "1956", "fr", "book"], ["Le Mythe de Sisyphe", "Albert Camus", "1942", "fr", "book"], ["La Nausée", "Jean-Paul Sartre", "1938", "fr", "book"], ["Huis clos", "Jean-Paul Sartre", "1944", "fr", "book"], ["Les Liaisons dangereuses", "Choderlos de Laclos", "1782", "fr", "book"], ["Les Trois Mousquetaires", "Alexandre Dumas", "1844", "fr", "book"], ["Vingt mille lieues sous les mers", "Jules Verne", "1870", "fr", "book"], ["Le Tour du monde en quatre-vingts jours", "Jules Verne", "1872", "fr", "book"], ["Le Grand Meaulnes", "Alain-Fournier", "1913", "fr", "book"], ["Voyage au bout de la nuit", "Louis-Ferdinand Céline", "1932", "fr", "book"], ["L'Écume des jours", "Boris Vian", "1947", "fr", "book"], ["Bonjour tristesse", "Françoise Sagan", "1954", "fr", "book"], ["L'Amant", "Marguerite Duras", "1984", "fr", "book"], ["Mémoires d'Hadrien", "Marguerite Yourcenar", "1951", "fr", "book"], ["Tartuffe", "Molière", "1664", "fr", "book"], ["Le Misanthrope", "Molière", "1666", "fr", "book"], ["Phèdre", "Jean Racine", "1677", "fr", "book"], ["Le Cid", "Pierre Corneille", "1637", "fr", "book"], ["Cyrano de Bergerac", "Edmond Rostand", "1897", "fr", "book"], ["En attendant Godot", "Samuel Beckett", "1952", "fr", "book"], ["Zazie dans le métro", "Raymond Queneau", "1959", "fr", "book"], ["La Princesse de Clèves", "Madame de La Fayette", "1678", "fr", "book"], ["Gargantua", "François Rabelais", "1534", "fr", "book"], ["Le Lac", "Alphonse de Lamartine", "1820", "fr", "poem"], ["Chanson d'automne", "Paul Verlaine", "1866", "fr", "poem"], ["Le Dormeur du val", "Arthur Rimbaud", "1870", "fr", "poem"], ["L'Albatros", "Charles Baudelaire", "1861", "fr", "poem"], ["Le Pont Mirabeau", "Guillaume Apollinaire", "1913", "fr", "poem"], ["Die Verwandlung", "Franz Kafka", "1915", "de", "book"], ["Der Process", "Franz Kafka", "1925", "de", "book"], ["Die Leiden des jungen Werthers", "Johann Wolfgang von Goethe", "1774", "de", "book"], ["Siddhartha", "Hermann Hesse", "1922", "de", "book"], ["Der Steppenwolf", "Hermann Hesse", "1927", "de", "book"], ["Buddenbrooks", "Thomas Mann", "1901", "de", "book"], ["Der Tod in Venedig", "Thomas Mann", "1912", "de", "book"], ["Effi Briest", "Theodor Fontane", "1895", "de", "book"], ["Il nome della rosa", "Umberto Eco", "1980", "it", "book"], ["Il Gattopardo", "Giuseppe Tomasi di Lampedusa", "1958", "it", "book"], ["Se questo è un uomo", "Primo Levi", "1947", "it", "book"], ["Le città invisibili", "Italo Calvino", "1972", "it", "book"], ["I promessi sposi", "Alessandro Manzoni", "1827", "it", "book"], ["Sjálfstætt fólk", "Halldór Laxness", "1934", "is", "book"], ["Íslandsklukkan", "Halldór Laxness", "1943", "is", "book"], ["Pride and Prejudice", "Jane Austen", "1813", "en", "book"], ["Mrs Dalloway", "Virginia Woolf", "1925", "en", "book"], ["Nineteen Eighty-Four", "George Orwell", "1949", "en", "book"], ["Moby-Dick", "Herman Melville", "1851", "en", "book"], ["The Great Gatsby", "F. Scott Fitzgerald", "1925", "en", "book"], ["Ulysses", "James Joyce", "1922", "en", "book"]];
+stubs.forEach(([title, name, year, orig, kind], n) => books.push({
+  type: "stub", kind, title, author: `${name} · ${year}`, orig, tr: {},
+  color: stubPalette[n % stubPalette.length], reads: 0
+}));
+
+const ui = {
+  fr: { scene: "La scène", gist: "En bref", people: "Personnages", passages: "Autres passages", why: "Pourquoi je le garde", original: "original", form: "Forme", collection: "Le recueil",
+        badge: "Traduction française", libre: "Traduction automatique", by: "trad.", missing: "pas de traduction française", stub: "Fiche à compléter", notesFr: "" },
+  is: { scene: "Sena", gist: "Í stuttu máli", people: "Persónur", passages: "Fleiri tilvitnanir", why: "Hvers vegna ég geymi hana", original: "frumtexti", form: "Bragarháttur", collection: "Ljóðabókin",
+        badge: "Íslensk þýðing", libre: "Vélþýðing", by: "þýð.", missing: "engin íslensk þýðing", stub: "Óútfyllt spjald", notesFr: "glósur á frönsku" },
+  en: { scene: "The scene", gist: "In brief", people: "Characters", passages: "Other passages", why: "Why I keep it", original: "original", form: "Form", collection: "The collection",
+        badge: "English translation", libre: "Machine translation", by: "trans.", missing: "no English translation", stub: "Card to fill in", notesFr: "notes in French" },
+  de: { scene: "Die Szene", gist: "Kurz gesagt", people: "Figuren", passages: "Weitere Stellen", why: "Warum ich es behalte", original: "Original", form: "Form", collection: "Der Gedichtband",
+        badge: "Deutsche Übersetzung", libre: "Maschinelle Übersetzung", by: "übers.", missing: "keine deutsche Übersetzung", stub: "Noch auszufüllen", notesFr: "Notizen auf Französisch" },
+  it: { scene: "La scena", gist: "In breve", people: "Personaggi", passages: "Altri passi", why: "Perché lo conservo", original: "originale", form: "Forma", collection: "La raccolta",
+        badge: "Traduzione italiana", libre: "Traduzione automatica", by: "trad.", missing: "nessuna traduzione italiana", stub: "Scheda da completare", notesFr: "note in francese" }
+};
+const langs = ["fr", "is", "en", "de", "it"];
+const chrome = {
+  fr: { readIn: "Lire en", random: "Au hasard", library: "Bibliothèque", settings: "Réglages", uiLang: "Langue de l'interface", italic: "Citations en italique",
+        search: "Rechercher un titre ou un auteur…", all: "Tous", books: "Livres", poems: "Poèmes", byAuthor: "Par auteur", byTitle: "Par titre", close: "Fermer",
+        card: ["fiche", "fiches"], stub: "Fiche à compléter", poem: "poème", hint: "← → parcourir · espace retourner",
+        names: { fr: "Français", is: "Islandais", en: "Anglais", de: "Allemand", it: "Italien" },
+        legend: { green: "publiée", yellow: "en partie", red: "automatique seulement", none: "aucune" }, original: "original",
+        flip: "Retourner", recent: "Récentes", readTimes: n => n === 1 ? "Lu une fois" : `Lu ${n} fois` },
+  is: { readIn: "Lesa á", random: "Af handahófi", library: "Bókasafn", settings: "Stillingar", uiLang: "Tungumál viðmóts", italic: "Tilvitnanir með skáletri",
+        search: "Leita að titli eða höfundi…", all: "Allt", books: "Bækur", poems: "Ljóð", byAuthor: "Eftir höfundi", byTitle: "Eftir titli", close: "Loka",
+        card: ["spjald", "spjöld"], stub: "Óútfyllt spjald", poem: "ljóð", hint: "← → fletta · bil snýr spjaldinu",
+        names: { fr: "Franska", is: "Íslenska", en: "Enska", de: "Þýska", it: "Ítalska" },
+        legend: { green: "útgefin", yellow: "að hluta", red: "aðeins vélþýðing", none: "engin" }, original: "frumtexti",
+        flip: "Snúa við", recent: "Nýlegt", readTimes: n => n === 1 ? "Lesið einu sinni" : `Lesið ${n} sinnum` },
+  en: { readIn: "Read in", random: "Random", library: "Library", settings: "Settings", uiLang: "Interface language", italic: "Quotes in italics",
+        search: "Search a title or an author…", all: "All", books: "Books", poems: "Poems", byAuthor: "By author", byTitle: "By title", close: "Close",
+        card: ["card", "cards"], stub: "Card to fill in", poem: "poem", hint: "← → browse · space flips the card",
+        names: { fr: "French", is: "Icelandic", en: "English", de: "German", it: "Italian" },
+        legend: { green: "published", yellow: "partly", red: "machine only", none: "none" }, original: "original",
+        flip: "Flip", recent: "Recent", readTimes: n => n === 1 ? "Read once" : `Read ${n} times` },
+  de: { readIn: "Lesen auf", random: "Zufällig", library: "Bibliothek", settings: "Einstellungen", uiLang: "Sprache der Oberfläche", italic: "Zitate kursiv",
+        search: "Titel oder Autor suchen…", all: "Alle", books: "Bücher", poems: "Gedichte", byAuthor: "Nach Autor", byTitle: "Nach Titel", close: "Schließen",
+        card: ["Karte", "Karten"], stub: "Noch auszufüllen", poem: "Gedicht", hint: "← → blättern · Leertaste wendet die Karte",
+        names: { fr: "Französisch", is: "Isländisch", en: "Englisch", de: "Deutsch", it: "Italienisch" },
+        legend: { green: "veröffentlicht", yellow: "teilweise", red: "nur maschinell", none: "keine" }, original: "Original",
+        flip: "Umdrehen", recent: "Zuletzt", readTimes: n => n === 1 ? "Einmal gelesen" : `${n}-mal gelesen` },
+  it: { readIn: "Leggi in", random: "A caso", library: "Biblioteca", settings: "Impostazioni", uiLang: "Lingua dell'interfaccia", italic: "Citazioni in corsivo",
+        search: "Cerca un titolo o un autore…", all: "Tutti", books: "Libri", poems: "Poesie", byAuthor: "Per autore", byTitle: "Per titolo", close: "Chiudi",
+        card: ["scheda", "schede"], stub: "Scheda da completare", poem: "poesia", hint: "← → sfoglia · spazio gira la scheda",
+        names: { fr: "Francese", is: "Islandese", en: "Inglese", de: "Tedesco", it: "Italiano" },
+        legend: { green: "pubblicata", yellow: "in parte", red: "solo automatica", none: "nessuna" }, original: "originale",
+        flip: "Gira", recent: "Recenti", readTimes: n => n === 1 ? "Letto una volta" : `Letto ${n} volte` }
+};
+const store = {
+  get(k) { try { return localStorage.getItem(k); } catch { return null; } },
+  set(k, v) { try { localStorage.setItem(k, v); } catch {} }
+};
+const browserLang = (navigator.language || "fr").slice(0, 2);
+let uiLang = langs.includes(store.get("uiLang")) ? store.get("uiLang") : langs.includes(browserLang) ? browserLang : "fr";
+const origOf = b => b.orig || "fr";
+const titleIn = b => (lang !== origOf(b) && b.tr[lang]) || b.title;
+const quoteMarks = {
+  fr: s => `« ${s} »`,
+  is: s => `„${s}“`,
+  en: s => `“${s.replaceAll("'", "’")}”`,
+  de: s => `„${s}“`,
+  it: s => `«${s}»`
+};
+const $ = id => document.getElementById(id);
+const card = $("card");
+let i = 0;
+let lang = langs.includes(store.get("lang")) ? store.get("lang") : "fr";
+
+function pick(q, o) {
+  const missing = lang !== o && !q[lang];
+  const translated = lang !== o && !missing;
+  const t = q[lang];
+  const libre = translated && !t.by;
+  const badge = !translated ? ""
+    : libre ? `<span class="badge libre">${ui[lang].libre}</span>`
+    : `<span class="badge">${ui[lang].badge}</span> <span class="credit">${ui[lang].by} ${t.by} · ${t.ed}</span>`;
+  return {
+    value: translated ? (libre ? t : t.text) : q[o],
+    shown: translated ? lang : o,
+    note: missing ? ` · <span class="missing">${ui[lang].missing}</span>` : "",
+    cls: !translated ? "" : libre ? "tr libre" : "tr",
+    badge
+  };
+}
+
+function text(q, o) {
+  const p = pick(q, o);
+  if (p.value === TO_COPY) return { ...p, quote: p.value, cls: "to-copy" };
+  return { ...p, quote: quoteMarks[p.shown](p.value) };
+}
+
+function render() {
+  const b = books[i];
+  document.querySelectorAll(".face").forEach(f => f.style.setProperty("--c", b.color));
+  const title = titleIn(b);
+  const mark = lang === origOf(b) ? ` <span class="orig-mark">(${ui[lang].original})</span>` : "";
+  document.querySelectorAll(".title").forEach(el => el.innerHTML = title + mark);
+  const original = title !== b.title ? ` · <span class="tr-title">${b.title}</span>` : "";
+  document.querySelectorAll(".author").forEach(el => el.innerHTML = b.author + original);
+  document.querySelectorAll("[data-l]").forEach(el => el.textContent = ui[lang][el.dataset.l]);
+  if (ui[lang].notesFr) document.querySelectorAll("[data-notes]").forEach(el =>
+    el.insertAdjacentHTML("beforeend", ` <span class="notes-lang">· ${ui[lang].notesFr}</span>`));
+  renderReads();
+  renderPicker();
+  card.classList.toggle("is-poem", b.type === "poem");
+  card.classList.toggle("is-stub", b.type === "stub");
+  if (b.type === "poem") renderPoem(b);
+  else if (b.type !== "stub") renderBook(b);
+  $("count").textContent = `${i + 1} / ${books.length}`;
+}
+
+function renderPoem(b) {
+  const p = pick(b.poem, origOf(b));
+  $("poem").innerHTML = p.value.map(stanza => `<p>${stanza.join("<br>")}</p>`).join("");
+  $("poem").className = `poem ${p.cls}`;
+  $("poemBadge").innerHTML = p.badge;
+  $("poemScroll").scrollTop = 0;
+  requestAnimationFrame(updatePoemNav);
+  $("poemSrc").innerHTML = b.src + p.note;
+  $("poemCtx").textContent = b.ctx;
+  $("poemForm").textContent = b.form;
+  $("poemColl").textContent = b.collection;
+  $("poemWhy").textContent = b.why;
+}
+
+function updatePoemNav() {
+  const el = $("poemScroll");
+  const frame = $("poemFrame");
+  const over = el.scrollHeight > el.clientHeight + 2;
+  const top = el.scrollTop <= 2;
+  const bottom = el.scrollTop + el.clientHeight >= el.scrollHeight - 2;
+  frame.classList.toggle("overflow", over);
+  frame.style.setProperty("--ft", over && !top ? "32px" : "0px");
+  frame.style.setProperty("--fb", over && !bottom ? "32px" : "0px");
+  frame.querySelector('[data-poem="-1"]').disabled = top;
+  frame.querySelector('[data-poem="1"]').disabled = bottom;
+}
+
+function stepPoem(dir) {
+  const el = $("poemScroll");
+  const origin = el.getBoundingClientRect().top - el.scrollTop;
+  const tops = [...$("poem").children].map(st => st.getBoundingClientRect().top - origin);
+  const y = el.scrollTop;
+  const target = dir > 0
+    ? tops.find(t => t > y + 4) ?? el.scrollHeight
+    : [...tops].reverse().find(t => t < y - 4) ?? 0;
+  el.scrollTo({ top: target });
+}
+
+function renderBook(b) {
+  $("ctx").textContent = b.ctx;
+  const main = text(b.quote, origOf(b));
+  $("quote").textContent = main.quote;
+  $("quote").className = main.cls;
+  $("badge").innerHTML = main.badge;
+  $("src").innerHTML = b.src + main.note;
+  $("gist").textContent = b.gist;
+  $("people").innerHTML = b.people.map(([name, role]) => `<li><b>${name}</b> <span>· ${role}</span></li>`).join("");
+  $("passages").innerHTML = `<div class="label">${ui[lang].passages}</div>` + b.passages.map(p => {
+    const t = text(p.quote, origOf(b));
+    return `<div class="passage"><p class="ctx">${p.ctx} <span>(${p.src}${t.note})</span> ${t.badge}</p><blockquote class="${t.cls}">${t.quote}</blockquote></div>`;
+  }).join("");
+  $("why").textContent = b.why;
+}
+
+function quality(b, l) {
+  if (l === origOf(b)) return { level: "orig" };
+  if (b.type === "stub") return { level: "none", published: 0, total: 0 };
+  const quotes = b.type === "poem" ? [b.poem] : [b.quote, ...b.passages.map(p => p.quote)];
+  const published = quotes.filter(q => q[l] && q[l].by).length;
+  const libre = quotes.filter(q => q[l] && !q[l].by).length;
+  const level = published === quotes.length ? "green"
+    : published > 0 ? "yellow"
+    : libre > 0 ? "red"
+    : "none";
+  return { level, published, total: quotes.length };
+}
+
+function renderPicker() {
+  const c = chrome[uiLang];
+  const detailOf = q => q.level === "orig" ? c.original : q.total ? `${q.published}/${q.total}` : "";
+  const current = quality(books[i], lang);
+  $("pickerName").textContent = c.names[lang];
+  $("pickerDot").className = `q ${current.level}`;
+  $("pickerCount").textContent = detailOf(current);
+  const items = langs.map(l => {
+    const q = quality(books[i], l);
+    const detail = detailOf(q);
+    return `<button data-lang="${l}" class="${l === lang ? "on" : ""}"><i class="q ${q.level}"></i><span>${c.names[l]}</span><small>${detail}</small></button>`;
+  }).join("");
+  const legend = ["green", "yellow", "red", "none"].map(k => `<span><i class="q ${k}"></i>${c.legend[k]}</span>`).join("");
+  $("pickerMenu").innerHTML = items + `<div class="legend">${legend}</div>`;
+}
+
+function renderChrome() {
+  const c = chrome[uiLang];
+  document.documentElement.lang = uiLang;
+  document.querySelectorAll("[data-c]").forEach(el => el.textContent = c[el.dataset.c]);
+  document.querySelectorAll("[data-c-title]").forEach(el => el.title = c[el.dataset.cTitle]);
+  $("libSearch").placeholder = c.search;
+  $("uiLangSel").value = uiLang;
+}
+
+const loadMap = key => { try { return JSON.parse(store.get(key)) || {}; } catch { return {}; } };
+const savedReads = loadMap("reads");
+const viewed = loadMap("viewed");
+books.forEach(b => { if (b.title in savedReads) b.reads = savedReads[b.title]; });
+
+function renderReads() {
+  const n = books[i].reads;
+  const label = chrome[uiLang].readTimes;
+  const dots = [1, 2, 3, 4, 5].map(k =>
+    `<button data-read="${k}" class="${k <= n ? "on" : ""}" aria-label="${label(k)}" aria-pressed="${k <= n}"></button>`).join("");
+  document.querySelectorAll(".reads").forEach(el => el.innerHTML = dots);
+}
+
+function markOverflow(el) {
+  el.classList.toggle("has-more", el.scrollTop + el.clientHeight < el.scrollHeight - 2);
+}
+document.querySelectorAll(".main-quote, .aside, .passages").forEach(el => {
+  el.addEventListener("scroll", () => markOverflow(el));
+  new ResizeObserver(() => markOverflow(el)).observe(el);
+  new MutationObserver(() => markOverflow(el)).observe(el, { childList: true, subtree: true, characterData: true });
+});
+
+$("poemScroll").addEventListener("scroll", updatePoemNav);
+new ResizeObserver(updatePoemNav).observe($("poemScroll"));
+document.fonts.ready.then(updatePoemNav);
+document.querySelectorAll("[data-poem]").forEach(btn => btn.addEventListener("click", e => {
+  e.stopPropagation();
+  stepPoem(+btn.dataset.poem);
+}));
+
+document.addEventListener("click", e => {
+  const dot = e.target.closest("[data-read]");
+  if (!dot) return;
+  e.stopPropagation();
+  const k = +dot.dataset.read;
+  books[i].reads = books[i].reads === k ? 0 : k;
+  savedReads[books[i].title] = books[i].reads;
+  store.set("reads", JSON.stringify(savedReads));
+  renderReads();
+}, true);
+
+function setFlipped(on) {
+  card.classList.toggle("flipped", on);
+  card.querySelector(".front").inert = on;
+  card.querySelector(".back").inert = !on;
+}
+
+function show(n) {
+  i = (n + books.length) % books.length;
+  setFlipped(false);
+  if (books[i].type !== "stub") {
+    viewed[books[i].title] = Date.now();
+    store.set("viewed", JSON.stringify(viewed));
+  }
+  render();
+}
+
+const kindOf = b => b.type === "poem" || b.kind === "poem" ? "poem" : "book";
+const authorName = b => b.author.split(" · ")[0];
+const authorKey = b => authorName(b).split(" ").at(-1);
+const fold = t => t.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+const sortTitle = t => fold(t).replace(/^(le |la |les |l'|l’|un |une |der |die |das |il |lo |gli |i |the |a |an )/, "");
+const groupKey = b => libSort === "recent" ? ""
+  : (libSort === "author" ? fold(authorKey(b)) : sortTitle(titleIn(b)))[0].toUpperCase();
+const byTitle = (x, y) => sortTitle(titleIn(x.b)).localeCompare(sortTitle(titleIn(y.b)), "fr");
+const sorters = {
+  author: (x, y) => fold(authorKey(x.b)).localeCompare(fold(authorKey(y.b)), "fr") || byTitle(x, y),
+  title: byTitle,
+  recent: (x, y) => (viewed[y.b.title] || 0) - (viewed[x.b.title] || 0) || byTitle(x, y)
+};
+let libKind = "all";
+let libSort = "author";
+
+function libMatches() {
+  const q = fold($("libSearch").value.trim());
+  return books
+    .map((b, n) => ({ b, n }))
+    .filter(({ b }) => libKind === "all" || kindOf(b) === libKind)
+    .filter(({ b }) => !q || fold([b.title, ...Object.values(b.tr), b.author].join(" ")).includes(q))
+    .sort(sorters[libSort]);
+}
+
+function tile({ b, n }) {
+  const dots = [1, 2, 3, 4, 5].map(k => `<i class="${k <= b.reads ? "on" : ""}"></i>`).join("");
+  const note = b.type === "stub" ? `<span>${chrome[uiLang].stub}</span>` : kindOf(b) === "poem" ? `<span>${chrome[uiLang].poem}</span>` : "";
+  return `<button class="tile ${b.type === "stub" ? "empty" : ""} ${n === i ? "current" : ""}" data-open="${n}" style="--c:${b.color}">
+    <span class="tile-title">${titleIn(b)}</span>
+    <span class="tile-author">${b.author}</span>
+    <span class="tile-meta">${dots}${note}</span>
+  </button>`;
+}
+
+function renderLibrary() {
+  const items = libMatches();
+  $("libCount").textContent = `${items.length} ${chrome[uiLang].card[items.length === 1 ? 0 : 1]}`;
+  const groups = new Map();
+  items.forEach(it => {
+    const key = groupKey(it.b);
+    if (!groups.has(key)) groups.set(key, []);
+    groups.get(key).push(it);
+  });
+  $("libList").innerHTML = [...groups].map(([letter, list]) =>
+    `<section class="lib-group">${letter ? `<h3>${letter}</h3>` : ""}<div class="lib-grid">${list.map(tile).join("")}</div></section>`).join("");
+}
+
+function openLibrary() {
+  $("library").hidden = false;
+  $("libSearch").value = "";
+  renderLibrary();
+  $("libSearch").focus();
+  $("libList").querySelector(".current")?.scrollIntoView({ block: "center" });
+}
+
+function closeLibrary() {
+  $("library").hidden = true;
+  $("openLib").focus();
+}
+
+function libraryKeys(e) {
+  if (e.key === "Escape") { closeLibrary(); return; }
+  if (e.key === "Tab") {
+    const focusable = [...$("library").querySelectorAll("input, button")];
+    const first = focusable[0], last = focusable.at(-1);
+    if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+    else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+    return;
+  }
+  const tiles = [...$("libList").querySelectorAll(".tile")];
+  if (e.target === $("libSearch") && e.key === "ArrowDown") { e.preventDefault(); tiles[0]?.focus(); return; }
+  const from = e.target.closest(".tile");
+  if (!from || !e.key.startsWith("Arrow")) return;
+  e.preventDefault();
+  const k = tiles.indexOf(from);
+  let to;
+  if (e.key === "ArrowRight") to = tiles[k + 1];
+  else if (e.key === "ArrowLeft") to = tiles[k - 1];
+  else {
+    const r = from.getBoundingClientRect();
+    const down = e.key === "ArrowDown";
+    const rows = tiles.filter(t => down ? t.getBoundingClientRect().top > r.bottom - 1 : t.getBoundingClientRect().bottom < r.top + 1);
+    const rowTop = down ? Math.min(...rows.map(t => t.getBoundingClientRect().top)) : Math.max(...rows.map(t => t.getBoundingClientRect().top));
+    to = rows.filter(t => t.getBoundingClientRect().top === rowTop)
+      .sort((a, b) => Math.abs(a.getBoundingClientRect().left - r.left) - Math.abs(b.getBoundingClientRect().left - r.left))[0];
+    if (!to && !down) { $("libSearch").focus(); return; }
+  }
+  to?.focus();
+  to?.scrollIntoView({ block: "nearest" });
+}
+
+$("openLib").addEventListener("click", openLibrary);
+$("libClose").addEventListener("click", closeLibrary);
+$("library").addEventListener("click", e => { if (e.target === $("library")) closeLibrary(); });
+$("libSearch").addEventListener("input", renderLibrary);
+$("libSearch").addEventListener("keydown", e => {
+  if (e.key !== "Enter") return;
+  const first = $("libList").querySelector("[data-open]");
+  if (first) first.click();
+});
+$("libList").addEventListener("click", e => {
+  const t = e.target.closest("[data-open]");
+  if (!t) return;
+  closeLibrary();
+  show(+t.dataset.open);
+});
+document.querySelectorAll("[data-kind]").forEach(btn => btn.addEventListener("click", () => {
+  libKind = btn.dataset.kind;
+  document.querySelectorAll("[data-kind]").forEach(el => el.classList.toggle("on", el === btn));
+  renderLibrary();
+}));
+document.querySelectorAll("[data-sort]").forEach(btn => btn.addEventListener("click", () => {
+  libSort = btn.dataset.sort;
+  document.querySelectorAll("[data-sort]").forEach(el => el.classList.toggle("on", el === btn));
+  renderLibrary();
+}));
+$("shuffle").addEventListener("click", () => {
+  const pool = books.map((b, n) => ({ b, n })).filter(({ b, n }) => b.type !== "stub" && n !== i);
+  const weights = pool.map(({ b }) => 1 / (b.reads + 1));
+  let r = Math.random() * weights.reduce((sum, w) => sum + w, 0);
+  const chosen = pool.find((_, k) => (r -= weights[k]) < 0) ?? pool[0];
+  if (chosen) show(chosen.n);
+});
+
+const triggers = { pickerMenu: "pickerBtn", settings: "settingsBtn" };
+
+function closePopovers(refocus) {
+  const open = [...document.querySelectorAll(".popover")].find(p => !p.hidden);
+  document.querySelectorAll(".popover").forEach(p => p.hidden = true);
+  Object.values(triggers).forEach(id => $(id).setAttribute("aria-expanded", "false"));
+  if (refocus && open) $(triggers[open.id]).focus();
+}
+
+function togglePopover(id, force) {
+  const el = $(id);
+  const open = force ?? el.hidden;
+  closePopovers(false);
+  el.hidden = !open;
+  $(triggers[id]).setAttribute("aria-expanded", String(open));
+  if (open) (el.querySelector(".on") || el.querySelector("button, select"))?.focus();
+}
+
+function menuKeys(e) {
+  if (e.key !== "ArrowDown" && e.key !== "ArrowUp") return;
+  e.preventDefault();
+  const items = [...$("pickerMenu").querySelectorAll("[data-lang]")];
+  const k = items.indexOf(document.activeElement);
+  items[(k + (e.key === "ArrowDown" ? 1 : -1) + items.length) % items.length].focus();
+}
+
+$("pickerBtn").addEventListener("click", e => { e.stopPropagation(); togglePopover("pickerMenu"); });
+$("settingsBtn").addEventListener("click", e => { e.stopPropagation(); togglePopover("settings"); });
+$("settings").addEventListener("click", e => e.stopPropagation());
+$("pickerMenu").addEventListener("click", e => {
+  e.stopPropagation();
+  const btn = e.target.closest("[data-lang]");
+  if (!btn) return;
+  lang = btn.dataset.lang;
+  store.set("lang", lang);
+  closePopovers(true);
+  render();
+});
+document.addEventListener("click", () => closePopovers(false));
+$("uiLangSel").addEventListener("change", e => {
+  uiLang = e.target.value;
+  store.set("uiLang", uiLang);
+  renderChrome();
+  renderPicker();
+  renderReads();
+});
+$("italicChk").checked = store.get("italic") === "1";
+const applyItalic = () => document.documentElement.style.setProperty("--emphasis", $("italicChk").checked ? "italic" : "normal");
+applyItalic();
+$("italicChk").addEventListener("change", e => {
+  store.set("italic", e.target.checked ? "1" : "0");
+  applyItalic();
+});
+document.querySelectorAll("[data-step]").forEach(btn =>
+  btn.addEventListener("click", () => show(i + +btn.dataset.step)));
+card.addEventListener("click", () => setFlipped(!card.classList.contains("flipped")));
+document.addEventListener("keydown", e => {
+  if (!$("library").hidden) { libraryKeys(e); return; }
+  if (e.key === "Escape") { closePopovers(true); return; }
+  const inPopover = e.target.closest(".popover");
+  if (inPopover) { if (inPopover.id === "pickerMenu") menuKeys(e); return; }
+  if (e.target.closest("input, select, textarea")) return;
+  if (e.key === "/") { e.preventDefault(); openLibrary(); return; }
+  if (e.key === "ArrowRight") show(i + 1);
+  if (e.key === "ArrowLeft") show(i - 1);
+  const poemVisible = books[i].type === "poem" && !card.classList.contains("flipped");
+  if (poemVisible && (e.key === "ArrowDown" || e.key === "ArrowUp")) {
+    e.preventDefault();
+    stepPoem(e.key === "ArrowDown" ? 1 : -1);
+  }
+  if (e.code === "Space" && !e.target.closest("button")) {
+    e.preventDefault();
+    setFlipped(!card.classList.contains("flipped"));
+  }
+});
+
+renderChrome();
+show(0);
+</script>
+</body>
+</html>
